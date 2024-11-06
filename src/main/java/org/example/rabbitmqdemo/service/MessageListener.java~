@@ -1,0 +1,32 @@
+package org.example.rabbitmqdemo.service;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.example.rabbitmqdemo.domain.Customer;
+import org.example.rabbitmqdemo.repository.CustomerRepository;
+import org.example.rabbitmqdemo.repository.NotificationRepository;
+import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class MessageListener {
+
+    private final CustomerRepository customerRepo;
+    private final NotificationRepository notificationRepo;
+
+    @RabbitListener(queues = "${spring.rabbitmq.template.default-receive-queue}")
+    public void receiveNotificationAndSendToCustomer(String message) {
+        notificationRepo.findByMessage(message).ifPresent(notification -> {
+            List<Customer> customers = customerRepo.findAll();
+            customers.forEach(customer -> {
+                customer.getNotifications().add(notification);
+                customerRepo.save(customer);
+            });
+        });
+    }
+}

@@ -1,0 +1,43 @@
+spring:
+  #DB config
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:rabbitMqDemo
+    username: sa
+    password: sa
+    name: rabbitMqDemo
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  #JPA config
+  jpa:
+    show-sql: true
+    properties:
+      dialect: org.hibernate.dialect.H2Dialect
+      ddl-auto: update
+      hibernate:
+        hbm2ddl:
+          auto: update
+        format_sql: true
+        use_sql_comments: true
+  #RabbitMQ config
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    template:
+      exchange: notificationExchange
+      default-receive-queue: notificationQueue
+      routing-key: notificationRoutingKey
+#Logging config
+#logging:
+#  level:
+#    root: info
+#    org.springframework.amqp: info
+#    org.springframework.web: info
+#    org.hibernate: info
+#    org.springframework.data: info
+
+
